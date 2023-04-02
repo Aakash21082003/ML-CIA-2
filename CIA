@@ -1,0 +1,140 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Mar 23 09:25:28 2023
+
+@author: AAKASH
+"""
+import pymysql as pms
+
+conn = pms.connect(host="localhost", 
+                   port=3306,
+                   user="root",
+                   password="Sundhar@1610",
+                   db="employee")
+cur = conn.cursor()
+#%%
+cur.execute("select * from login")
+#%%
+output = cur.fetchone()
+print(output)
+
+#%%
+import pandas as pd
+sql = "select * from login"
+df = pd.read_sql(sql, conn)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from flask import Flask, request, \
+    render_template
+app = Flask(__name__)
+import pickle
+
+model = pickle.load(open('model.pkl','rb'))
+
+@app.route("/")
+def main():
+    return render_template("index.html")
+
+@app.route("/predict", methods=['post'])
+def pred():
+    features = [float(i) 
+                for i in 
+                (request.form.values())]
+    pred = model.predict([features])
+    pred = round(pred[0],2)
+    return render_template("success.html",
+                           data=pred)
+    
+if __name__=='__main__':
+    app.run(host='localhost',port=5000)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+<html>
+
+<body>
+
+<h2> Salary is {{data}} </h2>
+
+</body>
+</html>
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar 21 11:48:28 2023
+
+@author: HP
+"""
+import pandas as pd
+
+data = pd.read_excel('hiring.xlsx')
+
+x = data.iloc[:,:-1].values
+y = data.iloc[:,-1].values
+
+from sklearn.linear_model import LinearRegression
+regression = LinearRegression()
+
+regression.fit(x,y)
+
+#print(regression.predict([[3,6,9]]))
+
+#%%
+import pickle
+
+pickle.dump(regression,open('model.pkl','wb'))
+
+
+
+
+
+
+
+
+
+
+<html>
+
+<body>
+
+<form action="/predict" method="Post">
+<input type="text" name="exp" placeholder="Yrs of Exp"/>
+<br />
+<input type="text" name="test" placeholder="test score" />
+<br />
+<input type="text" name="int" placeholder="Inte score"/>
+<br />
+<input type="submit" />
+</form>
+
+{{data}}
+</body>
+
+</html>
